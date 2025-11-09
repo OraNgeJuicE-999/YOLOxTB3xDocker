@@ -1,0 +1,19 @@
+
+<launch>
+    <!-- Set up the path -->
+    <arg name="yolo_env" default="$(env YOLO_CONFIG)"/>
+    <!-- <node pkg="yolo_detection" type="edgetpumodel.py" name="edgetpumodel" output="screen"/>
+    <node pkg="yolo_detection" type="nms.py" name="nms" output="screen"/>
+    <node pkg="yolo_detection" type="utils.py" name="utils" output="screen"/> -->
+    <!-- Start the node and load param privately for this node -->
+    <node pkg="yolo_detection" type="yolo_detection.py" name="yolo_detection" output="screen">
+        <!-- Load rosparam from the file -->
+        <rosparam command="load" file="$(arg yolo_env)"/>
+        <remap from="/image_input" to="/camera/image/compressed"/>
+        <param name="weights" value="$(find yolo_detection)/models/best_full_integer_quant_edgetpu.tflite"/>
+        <param name="data" value="$(find yolo_detection)/data.yaml"/>
+    </node>
+
+    <node pkg="yolo_detection" type="led_control.py" name="led_control" output="screen"/>
+
+</launch>

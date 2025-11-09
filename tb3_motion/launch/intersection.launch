@@ -1,0 +1,10 @@
+<launch>
+
+    <arg name="intersection_config" default="$(env INTERSECTION_CONFIG)"/>
+
+    <node pkg="tb3_motion" type="intersection.py" name="intersection" output="screen">
+        <rosparam command="load" file="$(arg intersection_config)"/>
+    </node> 
+
+</launch>
+    

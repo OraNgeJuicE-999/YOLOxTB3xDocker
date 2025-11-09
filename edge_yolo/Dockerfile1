@@ -1,0 +1,40 @@
+# Use roslaunch to auto-start roscore + node
+FROM yellowandorange/yoloxtb3:base3
+SHELL ["/bin/bash", "-c"]
+# ROS
+RUN set -euo pipefail \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends curl gnupg ca-certificates \
+ && echo "deb https://packages.cloud.google.com/apt coral-edgetpu-stable main" \
+      > /etc/apt/sources.list.d/coral-edgetpu.list \
+ && curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends \
+      python3-pip python3-catkin-tools libedgetpu1-std \
+ && rm -rf /var/lib/apt/lists/*
+
+# 2) PyCoral (+ tflite_runtime) via pip (works across distros/py versions 3.6–3.9)
+RUN python3 -m pip install --no-cache-dir --upgrade pip \
+ && python3 -m pip install --no-cache-dir \
+      --extra-index-url https://google-coral.github.io/py-repo/ \
+      'pycoral~=2.0'
+
+RUN pip install --no-cache-dir rpi.gpio
+RUN pip3 install --no-cache-dir opencv-python-headless numpy
+# Launch Files
+WORKDIR /root/ws/src
+RUN mkdir -p yolo_detection
+COPY ./yolo_detection /root/ws/src/yolo_detection
+
+RUN mkdir -p /root/ws/devel/lib/yolo_detection/app
+WORKDIR /root/ws/devel/lib/yolo_detection
+COPY ./yolo_detection/scripts/app /root/ws/devel/lib/yolo_detection/app
+RUN find /root/ws/src/yolo_detection -type f -name "*.py" -exec chmod +x {} \; || true
+
+# Catkin Make
+WORKDIR /root/ws
+RUN /bin/bash -lc "source /opt/ros/noetic/setup.bash && catkin_make"
+RUN echo 'source /opt/ros/noetic/setup.bash' >> /root/.bashrc && \
+    echo 'source /root/ws/devel/setup.bash'  >> /root/.bashrc
+
+CMD ["bash", "-lc", "source /opt/ros/noetic/setup.bash && source /root/ws/devel/setup.bash && roslaunch yolo_detection yolo_detection.launch"]

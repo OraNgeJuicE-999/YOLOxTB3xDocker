@@ -1,0 +1,35 @@
+services:
+  bringup:
+    image: yellowandorange/yolotxb3:bringup4
+    container_name: bringup
+    network_mode: host
+    environment:
+      - TURTLEBOT_MODEL=burger
+    devices:
+      - /dev/serial/by-id/usb-ROBOTIS_OpenCR_Virtual_ComPort_in_FS_Mode_FFFFFFFFFFFF-if00:/dev/ttyACM0
+    group_add:
+      - dialout
+    privileged: true
+    healthcheck:
+      test: ["CMD-SHELL", "bash -lc 'source /opt/ros/noetic/setup.bash && rostopic list >/dev/null'"]
+      interval: 10s
+      timeout: 8s
+      start_period: 90s
+      retries: 10
+    restart: unless-stopped
+
+  tb3:
+    image: yellowandorange/yolotxb3:tb3motion4
+    container_name: tb3
+    network_mode: host
+    environment:
+      - ROS_MASTER_URI=http://127.0.0.1:11311
+      - DETECT_CONFIG=/root/ws/config/detect_lane_config.yaml
+      - CONTROL_CONFIG=/root/ws/config/control_lane_config.yaml
+      - INTERSECTION_CONFIG=/root/ws/config/intersection_config.yaml
+      - CONSTRUCTION_CONFIG=/root/ws/config/construction_config.yaml
+    volumes:
+      - /home/ubuntu/YOLOxTB3/config:/root/ws/config:ro
+    depends_on:
+      bringup:
+        condition: service_healthy

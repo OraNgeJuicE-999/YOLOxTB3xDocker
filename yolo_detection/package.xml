@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>yolo_detection</name>
+  <version>0.0.0</version>
+  <description>
+    YOLO Detection Process, using yolov11n
+  </description>
+
+  <maintainer email="ychuang04@gmail.com">ethan</maintainer>
+
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>cv_bridge</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>image_transport</exec_depend>
+  <exec_depend>roslaunch</exec_depend>
+
+
+</package>

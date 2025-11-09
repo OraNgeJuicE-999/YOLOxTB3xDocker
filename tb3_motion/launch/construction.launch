@@ -1,0 +1,9 @@
+<launch>
+
+    <arg name="construction_config" default="$(env CONSTRUCTION_CONFIG)"/>
+
+    <node pkg="tb3_motion" type="construction.py" name="construction" output="screen">
+        <rosparam command="load" file="$(arg construction_config)"/>
+    </node>
+
+</launch>

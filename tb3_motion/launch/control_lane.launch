@@ -1,0 +1,9 @@
+<launch>
+
+    <arg name="control_lane_config" default="$(env CONTROL_CONFIG)"/>
+
+    <node pkg="tb3_motion" type="control_lane.py" name="control_lane" output="screen">
+        <rosparam command="load" file="$(arg control_lane_config)"/>
+    </node>
+
+</launch>

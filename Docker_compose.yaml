@@ -1,0 +1,35 @@
+services:
+  tb3:
+    image: yellowandorange/yolotxb3:tb3motion15
+    container_name: tb3
+    network_mode: host
+    environment:
+      - ROS_MASTER_URI=http://192.168.1.148:11311
+      - ROS_IP=192.168.1.148
+      - ROS_HOSTNAME=192.168.1.148
+
+      - DETECT_CONFIG=/root/ws/config/detect_lane_config.yaml
+      - CONTROL_CONFIG=/root/ws/config/control_lane_config.yaml
+      - INTERSECTION_CONFIG=/root/ws/config/intersection_config.yaml
+      - CONSTRUCTION_CONFIG=/root/ws/config/construction_config.yaml
+    volumes:
+      - /home/ubuntu/YOLOxTB3/config:/root/ws/config:ro
+    restart: unless-stopped
+
+  yolo:
+    image:  yellowandorange/yoloxtb3:yolo19
+    container_name: yolo
+    network_mode: host
+    privileged: true
+    devices:
+        - "/dev/bus/usb/002/002:/dev/bus/usb/002/002"
+    device_cgroup_rules:
+        - 'c 189:* rmw'
+    environment:
+      - ROS_MASTER_URI=http://192.168.1.148:11311
+      - ROS_IP=192.168.1.148
+      - ROS_HOSTNAME=192.168.1.148
+      - YOLO_CONFIG=/root/ws/config/yolo_detection_config.yaml
+    volumes:
+      - /home/ubuntu/YOLOxTB3/config:/root/ws/config:ro
+    restart: unless-stopped

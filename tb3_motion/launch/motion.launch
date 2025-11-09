@@ -1,0 +1,5 @@
+<launch>
+    <!-- Motion Launch Node Controller -->
+    <node pkg="tb3_motion" type="motion_core.py" name="motion" output="screen" />
+
+</launch>

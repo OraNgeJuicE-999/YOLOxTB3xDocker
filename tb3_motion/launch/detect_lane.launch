@@ -1,0 +1,10 @@
+<launch>
+
+    <arg name="detect_lane_config" default="$(env DETECT_CONFIG)"/>
+
+    <node pkg="tb3_motion" type="detect_lane.py" name="detect_lane" output="screen">
+        <rosparam command="load" file="$(arg detect_lane_config)"/>
+        <remap from="/image_input" to="/camera/image/compressed"/>
+    </node>
+
+</launch>
